@@ -1,0 +1,16 @@
+Walls - 000000
+PacMan - fff000
+Blinky Spawn - ff0000
+Fruit Spawn - 06ff00
+Pellet - ffffff
+Big Pellet - fff3ca
+Teleport Point - caeeff
+Invisible Wall - 6f6f6f
+Clyde Spawn - ff7200
+Pinky Spawn - ff00fc
+Inky Spawn - 00ffde
+Blinky Corner - ff8585
+Clyde Corner - ffd1ab
+Inky Corner - b5fff0
+Pinky Corner - ffabfc
+Ghost House Tile - d2d2d2
