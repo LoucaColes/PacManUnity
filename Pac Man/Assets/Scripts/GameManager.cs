@@ -37,6 +37,17 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private List<Ghosts> m_ghostScripts;
 
+    public enum GameType
+    {
+        NORM,
+        RAND,
+        COOP,
+        COMP,
+        COUNT,
+    }
+
+    private GameType m_gameType;
+
     // Use this for initialization
     private void Start()
     {
@@ -206,6 +217,24 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < m_ghostScripts.Count; i++)
         {
             m_ghostScripts[i].ChangeMode(Ghosts.GhostMode.FRIGHTENED);
+        }
+    }
+
+    public void SetGameType(GameType _newType)
+    {
+        m_gameType = _newType;
+    }
+
+    public GameType GetGameType()
+    {
+        return m_gameType;
+    }
+
+    public void SetGameType(int _newType)
+    {
+        if (_newType < (int)GameType.COUNT)
+        {
+            m_gameType = (GameType)_newType;
         }
     }
 }

@@ -175,8 +175,20 @@ public class LevelLoader : MonoBehaviour
                 break;
 
             case 3:
+                t_node.SetUpNode(t_newPiece, t_position, true, true, m_colourToPrefabs[_i].m_name, false, false);
+                GameManager.m_gameManager.UpdatePelletCount(1);
+                break;
+
             case 4:
                 t_node.SetUpNode(t_newPiece, t_position, true, true, m_colourToPrefabs[_i].m_name, false, false);
+                if (GameManager.m_gameManager.GetGameType() == GameManager.GameType.RAND)
+                {
+                    t_newPiece.GetComponent<PowerUp>().SetPower();
+                }
+                else
+                {
+                    Destroy(t_newPiece.GetComponent<PowerUp>());
+                }
                 GameManager.m_gameManager.UpdatePelletCount(1);
                 break;
 

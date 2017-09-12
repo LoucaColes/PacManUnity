@@ -5,6 +5,7 @@ using UnityEngine;
 public class Ghosts : MonoBehaviour
 {
     public float m_moveSpeed;
+    private float m_originalSpeed;
 
     [SerializeField]
     protected Node m_startNode;
@@ -49,6 +50,19 @@ public class Ghosts : MonoBehaviour
     [SerializeField]
     protected Node m_cornerNode;
 
+    private float m_poweredTime;
+    private float m_poweredTimer;
+
+    [SerializeField]
+    private bool m_powered;
+
+    [SerializeField]
+    private PowerUp.Powers m_currentPower;
+
+    private SpriteRenderer m_renderer;
+
+    private float m_origSpeed;
+
     // Use this for initialization
     protected virtual void Start()
     {
@@ -60,6 +74,11 @@ public class Ghosts : MonoBehaviour
         m_animator = GetComponent<Animator>();
         m_timer = 0;
         SetStartNode(Grid.m_grid.GetNodeAt(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y)));
+        m_origSpeed = m_moveSpeed;
+        m_poweredTimer = 0;
+        m_powered = false;
+        m_currentPower = PowerUp.Powers.COUNT;
+        m_renderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -69,6 +88,28 @@ public class Ghosts : MonoBehaviour
         MoveToNextNode();
         MovementAnimationCheck();
         SetOppositeDirection();
+        if (m_powered)
+        {
+            m_poweredTimer += Time.deltaTime;
+            if (m_poweredTimer >= m_poweredTime)
+            {
+                switch (m_currentPower)
+                {
+                    case PowerUp.Powers.FASTGHOST:
+                    case PowerUp.Powers.SLOWGHOST:
+                        m_moveSpeed = m_origSpeed;
+                        break;
+
+                    case PowerUp.Powers.INVISGHOST:
+                        m_renderer.enabled = true;
+                        m_animator.enabled = true;
+                        break;
+                }
+                m_poweredTimer = 0;
+                m_currentPower = PowerUp.Powers.COUNT;
+                m_powered = false;
+            }
+        }
     }
 
     private void MovementAnimationCheck()
@@ -710,6 +751,31 @@ public class Ghosts : MonoBehaviour
 
             case Direction.Directions.LEFT:
                 m_oppositeDirection = Direction.Directions.RIGHT;
+                break;
+        }
+    }
+
+    public void SetPowered(PowerUp.Powers _newPower, float _powerTime)
+    {
+        m_powered = true;
+        m_currentPower = _newPower;
+        m_poweredTime = _powerTime;
+        m_poweredTimer = 0;
+        switch (m_currentPower)
+        {
+            case PowerUp.Powers.FASTGHOST:
+                m_moveSpeed = m_moveSpeed * 2;
+                m_poweredTime *= 2;
+                break;
+
+            case PowerUp.Powers.SLOWGHOST:
+                m_moveSpeed = m_moveSpeed / 2;
+                m_poweredTime *= 2;
+                break;
+
+            case PowerUp.Powers.INVISGHOST:
+                m_renderer.enabled = false;
+                m_animator.enabled = false;
                 break;
         }
     }
