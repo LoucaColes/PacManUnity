@@ -101,6 +101,30 @@ public class LevelLoader : MonoBehaviour
             {
                 m_ghosts[i].gameObject.GetComponent<Ghosts>().SetCornerNode(m_pinkyCorner);
             }
+            if (GameManager.m_gameManager.GetGameType() == GameManager.GameType.COMP)
+            {
+                m_ghosts[i].GetComponent<PlayableGhost>().m_playerId = i + 1;
+                if (m_ghosts[i].GetComponent<Blinky>())
+                {
+                    Destroy(m_ghosts[i].GetComponent<Blinky>());
+                }
+                else if (m_ghosts[i].GetComponent<Clyde>())
+                {
+                    Destroy(m_ghosts[i].GetComponent<Clyde>());
+                }
+                else if (m_ghosts[i].GetComponent<Inky>())
+                {
+                    Destroy(m_ghosts[i].GetComponent<Inky>());
+                }
+                else if (m_ghosts[i].GetComponent<Pinky>())
+                {
+                    Destroy(m_ghosts[i].GetComponent<Pinky>());
+                }
+            }
+            else
+            {
+                Destroy(m_ghosts[i].GetComponent<PlayableGhost>());
+            }
         }
 
         GameManager.m_gameManager.ChangeState(GameManager.GameState.GAME);

@@ -112,7 +112,7 @@ public class Ghosts : MonoBehaviour
         }
     }
 
-    private void MovementAnimationCheck()
+    protected void MovementAnimationCheck()
     {
         if (m_currentMode != GhostMode.FRIGHTENED)
         {

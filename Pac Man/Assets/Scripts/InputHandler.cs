@@ -14,49 +14,65 @@ public class InputHandler : MonoBehaviour
     private void Start()
     {
         m_movementScript = GetComponent<PacManMovement>();
+
         m_player = ReInput.players.GetPlayer(m_playerId);
     }
 
     // Update is called once per frame
     private void Update()
     {
+        HandleInput();
+    }
+
+    private void HandleInput()
+    {
         if (m_movementScript.GetPower() == PowerUp.Powers.INVERT)
         {
-            if (m_player.GetButtonDown("MoveUp"))
-            {
-                m_movementScript.SetDirection(Vector3.down, Direction.Directions.DOWN);
-            }
-            else if (m_player.GetButtonDown("MoveDown"))
-            {
-                m_movementScript.SetDirection(Vector3.up, Direction.Directions.UP);
-            }
-            else if (m_player.GetButtonDown("MoveRight"))
-            {
-                m_movementScript.SetDirection(Vector3.left, Direction.Directions.LEFT);
-            }
-            else if (m_player.GetButtonDown("MoveLeft"))
-            {
-                m_movementScript.SetDirection(Vector3.right, Direction.Directions.RIGHT);
-            }
+            InvertedInput();
         }
         else
         {
-            if (m_player.GetButtonDown("MoveUp"))
-            {
-                m_movementScript.SetDirection(Vector3.up, Direction.Directions.UP);
-            }
-            else if (m_player.GetButtonDown("MoveDown"))
-            {
-                m_movementScript.SetDirection(Vector3.down, Direction.Directions.DOWN);
-            }
-            else if (m_player.GetButtonDown("MoveRight"))
-            {
-                m_movementScript.SetDirection(Vector3.right, Direction.Directions.RIGHT);
-            }
-            else if (m_player.GetButtonDown("MoveLeft"))
-            {
-                m_movementScript.SetDirection(Vector3.left, Direction.Directions.LEFT);
-            }
+            NormalInput();
+        }
+    }
+
+    private void NormalInput()
+    {
+        if (m_player.GetButtonDown("MoveUp"))
+        {
+            m_movementScript.SetDirection(Vector3.up, Direction.Directions.UP);
+        }
+        else if (m_player.GetButtonDown("MoveDown"))
+        {
+            m_movementScript.SetDirection(Vector3.down, Direction.Directions.DOWN);
+        }
+        else if (m_player.GetButtonDown("MoveRight"))
+        {
+            m_movementScript.SetDirection(Vector3.right, Direction.Directions.RIGHT);
+        }
+        else if (m_player.GetButtonDown("MoveLeft"))
+        {
+            m_movementScript.SetDirection(Vector3.left, Direction.Directions.LEFT);
+        }
+    }
+
+    private void InvertedInput()
+    {
+        if (m_player.GetButtonDown("MoveUp"))
+        {
+            m_movementScript.SetDirection(Vector3.down, Direction.Directions.DOWN);
+        }
+        else if (m_player.GetButtonDown("MoveDown"))
+        {
+            m_movementScript.SetDirection(Vector3.up, Direction.Directions.UP);
+        }
+        else if (m_player.GetButtonDown("MoveRight"))
+        {
+            m_movementScript.SetDirection(Vector3.left, Direction.Directions.LEFT);
+        }
+        else if (m_player.GetButtonDown("MoveLeft"))
+        {
+            m_movementScript.SetDirection(Vector3.right, Direction.Directions.RIGHT);
         }
     }
 }

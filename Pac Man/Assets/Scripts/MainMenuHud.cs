@@ -22,30 +22,33 @@ public class MainMenuHud : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        m_modeText.text = GameManager.m_gameManager.GetGameType().ToString();
-        if (m_player.GetButtonDown("MoveLeft"))
+        if (GameManager.m_gameManager.GetState() == GameManager.GameState.MAIN)
         {
-            if (m_index > 0)
+            m_modeText.text = GameManager.m_gameManager.GetGameType().ToString();
+            if (m_player.GetButtonDown("MoveLeft"))
             {
-                m_index--;
-                GameManager.m_gameManager.SetGameType(m_index);
+                if (m_index > 0)
+                {
+                    m_index--;
+                    GameManager.m_gameManager.SetGameType(m_index);
+                }
             }
-        }
-        if (m_player.GetButtonDown("MoveRight"))
-        {
-            if (m_index < (int)GameManager.GameType.COUNT)
+            if (m_player.GetButtonDown("MoveRight"))
             {
-                m_index++;
-                GameManager.m_gameManager.SetGameType(m_index);
+                if (m_index < (int)GameManager.GameType.COUNT)
+                {
+                    m_index++;
+                    GameManager.m_gameManager.SetGameType(m_index);
+                }
             }
-        }
-        if (m_player.GetButtonDown("Accept"))
-        {
-            PlayGame();
-        }
-        if (m_player.GetButtonDown("Return"))
-        {
-            ExitGame();
+            if (m_player.GetButtonDown("Accept"))
+            {
+                PlayGame();
+            }
+            if (m_player.GetButtonDown("Return"))
+            {
+                ExitGame();
+            }
         }
     }
 

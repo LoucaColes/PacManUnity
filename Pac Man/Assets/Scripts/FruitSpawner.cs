@@ -34,33 +34,20 @@ public class FruitSpawner : MonoBehaviour
     {
         if (!m_currentFruit)
         {
-            m_waitTimer += Time.deltaTime;
-            if (m_waitTimer >= m_waitTime)
-            {
-                SpawnFruit();
-                m_waitTimer = 0;
-            }
+            StartSpawnProcess();
         }
         else if (m_currentFruit)
         {
-            m_lifeTimer += Time.deltaTime;
-            if (m_lifeTimer >= m_lifeTime / 2)
-            {
-                m_flashTimer += Time.deltaTime;
-                if (m_flashTimer >= m_flashTime)
-                {
-                    m_currentFruit.GetComponent<SpriteRenderer>().enabled = !m_currentFruit.GetComponent<SpriteRenderer>().enabled;
-                    m_flashTimer = 0;
-                }
-            }
-            if (m_lifeTimer >= m_lifeTime || GameManager.m_gameManager.GetState() == GameManager.GameState.MAIN)
-            {
-                Destroy(m_currentFruit);
-                m_flashTimer = 0;
-                m_lifeTimer = 0;
-                m_waitTimer = 0;
-                m_node.SetObject(this.gameObject);
-            }
+        }
+    }
+
+    private void StartSpawnProcess()
+    {
+        m_waitTimer += Time.deltaTime;
+        if (m_waitTimer >= m_waitTime)
+        {
+            SpawnFruit();
+            m_waitTimer = 0;
         }
     }
 
@@ -68,5 +55,37 @@ public class FruitSpawner : MonoBehaviour
     {
         m_currentFruit = (GameObject)Instantiate(m_fruits[GameManager.m_gameManager.GetLevel()], transform.position, Quaternion.identity);
         m_node.SetObject(m_currentFruit);
+    }
+
+    private void StartDecayProcess()
+    {
+        m_lifeTimer += Time.deltaTime;
+        if (m_lifeTimer >= m_lifeTime / 2)
+        {
+            HalfLifeTime();
+        }
+        if (m_lifeTimer >= m_lifeTime || GameManager.m_gameManager.GetState() == GameManager.GameState.MAIN)
+        {
+            EndOfLife();
+        }
+    }
+
+    private void HalfLifeTime()
+    {
+        m_flashTimer += Time.deltaTime;
+        if (m_flashTimer >= m_flashTime)
+        {
+            m_currentFruit.GetComponent<SpriteRenderer>().enabled = !m_currentFruit.GetComponent<SpriteRenderer>().enabled;
+            m_flashTimer = 0;
+        }
+    }
+
+    private void EndOfLife()
+    {
+        Destroy(m_currentFruit);
+        m_flashTimer = 0;
+        m_lifeTimer = 0;
+        m_waitTimer = 0;
+        m_node.SetObject(this.gameObject);
     }
 }
