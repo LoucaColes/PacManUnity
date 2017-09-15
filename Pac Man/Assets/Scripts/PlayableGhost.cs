@@ -22,7 +22,7 @@ public class PlayableGhost : Ghosts
     protected override void Update()
     {
         ModeUpdate();
-        MovementAnimationCheck();
+        base.MovementAnimationCheck();
         SetOppositeDirection();
         Input();
         Movement();

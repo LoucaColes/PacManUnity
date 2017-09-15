@@ -277,9 +277,10 @@ public class PacManMovement : MonoBehaviour
         }
     }
 
-    private void ResetPostion()
+    public void ResetPostion()
     {
         transform.position = m_startNode.GetPosition();
+        m_currentDirection = Direction.Directions.STOP;
     }
 
     public Node GetPinkyNode()

@@ -60,22 +60,11 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        m_gameState = GameState.MAIN;
-
+        ChangeState(GameState.MAIN);
         m_level = 0;
 
         m_ghosts = new List<GameObject>();
         m_ghostScripts = new List<Ghosts>();
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-        if (m_mainHud && m_gameHud)
-        {
-            CanvasUpdate();
-            StateUpdate();
-        }
     }
 
     public void NextLevel()
@@ -142,6 +131,8 @@ public class GameManager : MonoBehaviour
     public void ChangeState(GameState _state)
     {
         m_gameState = _state;
+        StateUpdate();
+        CanvasUpdate();
     }
 
     public GameState GetState()
@@ -159,7 +150,7 @@ public class GameManager : MonoBehaviour
         ClearGhosts();
         ClearLevel();
 
-        m_gameState = GameState.MAIN;
+        ChangeState(GameState.MAIN);
         m_level = 0;
     }
 
@@ -169,7 +160,14 @@ public class GameManager : MonoBehaviour
         {
             for (int i = 0; i < transform.childCount; i++)
             {
-                Destroy(transform.GetChild(i).gameObject);
+                if (!transform.GetChild(i).gameObject.GetComponent<PacManMovement>())
+                {
+                    Destroy(transform.GetChild(i).gameObject);
+                }
+                else
+                {
+                    transform.GetChild(i).gameObject.GetComponent<PacManMovement>().ResetPostion();
+                }
             }
         }
     }
@@ -177,7 +175,8 @@ public class GameManager : MonoBehaviour
     public void MoveToNextLevel()
     {
         ClearLevel();
-        m_gameState = GameState.SETUP;
+        ClearGhosts();
+        ChangeState(GameState.SETUP);
     }
 
     public void SetPelletCount(int _amount)
@@ -210,14 +209,6 @@ public class GameManager : MonoBehaviour
         m_ghosts.Clear();
         m_ghostScripts.Clear();
         m_levelLoader.ClearGhosts();
-    }
-
-    public void SetGhostsFrightened()
-    {
-        for (int i = 0; i < m_ghostScripts.Count; i++)
-        {
-            m_ghostScripts[i].ChangeMode(Ghosts.GhostMode.FRIGHTENED);
-        }
     }
 
     public void SetGameType(GameType _newType)
