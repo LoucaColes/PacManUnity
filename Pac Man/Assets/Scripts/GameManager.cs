@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager m_gameManager;
 
     private int m_level;
+    private int m_levelCap;
 
     public enum GameState
     {
@@ -41,7 +42,6 @@ public class GameManager : MonoBehaviour
     {
         NORM,
         RAND,
-        COOP,
         COMP,
         COUNT,
     }
@@ -69,7 +69,14 @@ public class GameManager : MonoBehaviour
 
     public void NextLevel()
     {
-        m_level++;
+        if (m_level < m_levelCap)
+        {
+            m_level++;
+        }
+        else
+        {
+            GameOver();
+        }
         m_gameHudScript.UpdateLevelText(m_level);
     }
 
@@ -116,6 +123,10 @@ public class GameManager : MonoBehaviour
         switch (m_gameState)
         {
             case GameState.MAIN:
+                if (PacManMovement.m_pacman && PacManMovement.m_pacman.IsEnabled())
+                {
+                    PacManMovement.m_pacman.DisablePacMan();
+                }
                 break;
 
             case GameState.SETUP:
@@ -124,6 +135,10 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.GAME:
+                if (PacManMovement.m_pacman && !PacManMovement.m_pacman.IsEnabled())
+                {
+                    PacManMovement.m_pacman.EnablePacMan();
+                }
                 break;
         }
     }
@@ -174,9 +189,17 @@ public class GameManager : MonoBehaviour
 
     public void MoveToNextLevel()
     {
-        ClearLevel();
-        ClearGhosts();
-        ChangeState(GameState.SETUP);
+        if (m_level == m_levelCap)
+        {
+            GameOver();
+            Destroy(PacManMovement.m_pacman.gameObject);
+        }
+        else
+        {
+            ClearLevel();
+            ClearGhosts();
+            ChangeState(GameState.SETUP);
+        }
     }
 
     public void SetPelletCount(int _amount)
@@ -227,5 +250,10 @@ public class GameManager : MonoBehaviour
         {
             m_gameType = (GameType)_newType;
         }
+    }
+
+    public void SetLevelCap(int _cap)
+    {
+        m_levelCap = _cap;
     }
 }

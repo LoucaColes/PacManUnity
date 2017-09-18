@@ -34,6 +34,11 @@ public class PacManMovement : MonoBehaviour
 
     private SpriteRenderer m_renderer;
 
+    public float m_resetTime;
+
+    private bool m_dead;
+    private bool m_enabled;
+
     // Use this for initialization
     protected void Start()
     {
@@ -61,10 +66,19 @@ public class PacManMovement : MonoBehaviour
         m_poweredTimer = 0;
         m_powered = false;
         m_currentPower = PowerUp.Powers.COUNT;
+        m_dead = false;
+        m_enabled = true;
     }
 
     // Update is called once per frame
     private void Update()
+    {
+        Movement();
+        MovementAnimationCheck();
+        Powered();
+    }
+
+    private void Movement()
     {
         if (m_direction != Vector3.zero)
         {
@@ -80,7 +94,10 @@ public class PacManMovement : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, t_endPos, m_moveSpeed * Time.deltaTime);
             }
         }
-        MovementAnimationCheck();
+    }
+
+    private void Powered()
+    {
         if (m_powered)
         {
             m_poweredTimer += Time.deltaTime;
@@ -141,35 +158,52 @@ public class PacManMovement : MonoBehaviour
 
     private void MovementAnimationCheck()
     {
-        switch (m_currentDirection)
+        if (!m_dead)
         {
-            case Direction.Directions.RIGHT:
-                m_animator.SetBool("Right", true);
-                m_animator.SetBool("Up", false);
-                m_animator.SetBool("Left", false);
-                m_animator.SetBool("Down", false);
-                break;
+            print("Not dead");
+            switch (m_currentDirection)
+            {
+                case Direction.Directions.RIGHT:
+                    m_animator.SetBool("Right", true);
+                    m_animator.SetBool("Up", false);
+                    m_animator.SetBool("Left", false);
+                    m_animator.SetBool("Down", false);
+                    m_animator.SetBool("Dead", false);
+                    break;
 
-            case Direction.Directions.LEFT:
-                m_animator.SetBool("Right", false);
-                m_animator.SetBool("Up", false);
-                m_animator.SetBool("Left", true);
-                m_animator.SetBool("Down", false);
-                break;
+                case Direction.Directions.LEFT:
+                    m_animator.SetBool("Right", false);
+                    m_animator.SetBool("Up", false);
+                    m_animator.SetBool("Left", true);
+                    m_animator.SetBool("Down", false);
+                    m_animator.SetBool("Dead", false);
+                    break;
 
-            case Direction.Directions.UP:
-                m_animator.SetBool("Right", false);
-                m_animator.SetBool("Up", true);
-                m_animator.SetBool("Left", false);
-                m_animator.SetBool("Down", false);
-                break;
+                case Direction.Directions.UP:
+                    m_animator.SetBool("Right", false);
+                    m_animator.SetBool("Up", true);
+                    m_animator.SetBool("Left", false);
+                    m_animator.SetBool("Down", false);
+                    m_animator.SetBool("Dead", false);
+                    break;
 
-            case Direction.Directions.DOWN:
-                m_animator.SetBool("Right", false);
-                m_animator.SetBool("Up", false);
-                m_animator.SetBool("Left", false);
-                m_animator.SetBool("Down", true);
-                break;
+                case Direction.Directions.DOWN:
+                case Direction.Directions.STOP:
+                    m_animator.SetBool("Right", false);
+                    m_animator.SetBool("Up", false);
+                    m_animator.SetBool("Left", false);
+                    m_animator.SetBool("Down", true);
+                    m_animator.SetBool("Dead", false);
+                    break;
+            }
+        }
+        else
+        {
+            m_animator.SetBool("Right", false);
+            m_animator.SetBool("Up", false);
+            m_animator.SetBool("Left", false);
+            m_animator.SetBool("Down", false);
+            m_animator.SetBool("Dead", true);
         }
     }
 
@@ -194,60 +228,10 @@ public class PacManMovement : MonoBehaviour
         if (collision.tag.Contains("Pellet"))
         {
             Node t_node = collision.GetComponent<Node>();
-            if (t_node.GetName().Contains("Pellet"))
-            {
-                GameManager.m_gameManager.UpdatePelletCount(-1);
-            }
+            GameManager.m_gameManager.UpdatePelletCount(-1);
             if (t_node.GetName().Contains("Power"))
             {
-                GameObject[] t_ghosts = GameObject.FindGameObjectsWithTag("Ghost");
-                for (int i = 0; i < t_ghosts.Length; i++)
-                {
-                    t_ghosts[i].GetComponent<Ghosts>().ResetTimer();
-                    t_ghosts[i].GetComponent<Ghosts>().ChangeMode(Ghosts.GhostMode.FRIGHTENED);
-                }
-
-                if (collision.gameObject.GetComponent<PowerUp>())
-                {
-                    PowerUp t_powerUpScript = collision.gameObject.GetComponent<PowerUp>();
-                    m_currentPower = t_powerUpScript.GetPower();
-                    m_poweredTime = t_powerUpScript.GetTime();
-                    GameManager.m_gameManager.GetGameHud().UpdatePowerText(m_currentPower.ToString());
-                    switch (m_currentPower)
-                    {
-                        case PowerUp.Powers.FAST:
-                            m_moveSpeed = m_moveSpeed * 2;
-                            m_poweredTime *= 2;
-                            break;
-
-                        case PowerUp.Powers.SLOW:
-                            m_moveSpeed = m_moveSpeed / 2;
-                            m_poweredTime *= 2;
-                            break;
-
-                        case PowerUp.Powers.INVISIBLE:
-                            m_renderer.enabled = false;
-                            m_animator.enabled = false;
-                            m_poweredTime *= 3;
-                            break;
-
-                        case PowerUp.Powers.INVINCIBLE:
-                            m_poweredTime *= 3;
-                            break;
-
-                        case PowerUp.Powers.FASTGHOST:
-                        case PowerUp.Powers.INVISGHOST:
-                        case PowerUp.Powers.SLOWGHOST:
-                            for (int i = 0; i < t_ghosts.Length; i++)
-                            {
-                                t_ghosts[i].GetComponent<Ghosts>().SetPowered(m_currentPower, m_poweredTime);
-                            }
-                            m_currentPower = PowerUp.Powers.COUNT;
-                            break;
-                    }
-                    m_poweredTimer = 0;
-                    m_powered = true;
-                }
+                PowerPill(collision);
             }
             m_scoreScript.UpdateScore(t_node.GetObject().GetComponent<Scoreable>().GetScoreValue());
             t_node.RemoveObject();
@@ -260,14 +244,7 @@ public class PacManMovement : MonoBehaviour
         }
         if (collision.tag == "Ghost" && collision.GetComponent<Ghosts>().GetCurrentMode() != Ghosts.GhostMode.FRIGHTENED && m_currentPower != PowerUp.Powers.INVINCIBLE)
         {
-            ResetPostion();
-            GameObject[] t_ghosts = GameObject.FindGameObjectsWithTag("Ghost");
-            for (int i = 0; i < t_ghosts.Length; i++)
-            {
-                t_ghosts[i].GetComponent<Ghosts>().ResetPosition();
-                t_ghosts[i].GetComponent<Ghosts>().ChangeMode(Ghosts.GhostMode.EXIT);
-            }
-            m_lives.UpdateLives(-1);
+            StartCoroutine("PacManReset");
         }
         else if (collision.tag == "Ghost" && collision.GetComponent<Ghosts>().GetCurrentMode() == Ghosts.GhostMode.FRIGHTENED)
         {
@@ -319,5 +296,123 @@ public class PacManMovement : MonoBehaviour
     public PowerUp.Powers GetPower()
     {
         return m_currentPower;
+    }
+
+    private void PowerPill(Collider2D _collision)
+    {
+        GameObject[] t_ghosts = GameObject.FindGameObjectsWithTag("Ghost");
+        for (int i = 0; i < t_ghosts.Length; i++)
+        {
+            t_ghosts[i].GetComponent<Ghosts>().ResetTimer();
+            t_ghosts[i].GetComponent<Ghosts>().ChangeMode(Ghosts.GhostMode.FRIGHTENED);
+        }
+
+        if (_collision.gameObject.GetComponent<PowerUp>())
+        {
+            PowerUp t_powerUpScript = _collision.gameObject.GetComponent<PowerUp>();
+            m_currentPower = t_powerUpScript.GetPower();
+            m_poweredTime = t_powerUpScript.GetTime();
+            GameManager.m_gameManager.GetGameHud().UpdatePowerText(m_currentPower.ToString());
+            PowerSetUp(t_ghosts);
+            m_poweredTimer = 0;
+            m_powered = true;
+        }
+    }
+
+    private void PowerSetUp(GameObject[] _ghosts)
+    {
+        switch (m_currentPower)
+        {
+            case PowerUp.Powers.FAST:
+                m_moveSpeed = m_moveSpeed * 2;
+                m_poweredTime *= 2;
+                break;
+
+            case PowerUp.Powers.SLOW:
+                m_moveSpeed = m_moveSpeed / 2;
+                m_poweredTime *= 2;
+                break;
+
+            case PowerUp.Powers.INVISIBLE:
+                m_renderer.enabled = false;
+                m_animator.enabled = false;
+                m_poweredTime *= 3;
+                break;
+
+            case PowerUp.Powers.INVINCIBLE:
+                m_poweredTime *= 3;
+                break;
+
+            case PowerUp.Powers.FASTGHOST:
+            case PowerUp.Powers.INVISGHOST:
+            case PowerUp.Powers.SLOWGHOST:
+                for (int i = 0; i < _ghosts.Length; i++)
+                {
+                    _ghosts[i].GetComponent<Ghosts>().SetPowered(m_currentPower, m_poweredTime);
+                }
+                m_currentPower = PowerUp.Powers.COUNT;
+                break;
+        }
+    }
+
+    public void KillPacMan()
+    {
+        StartCoroutine("PacManReset");
+    }
+
+    private IEnumerator PacManReset()
+    {
+        m_dead = true;
+        m_lives.UpdateLives(-1);
+        m_currentDirection = Direction.Directions.STOP;
+        m_direction = Vector3.zero;
+        if (GameManager.m_gameManager.GetState() != GameManager.GameState.MAIN)
+        {
+            GameObject[] t_ghosts = GameObject.FindGameObjectsWithTag("Ghost");
+            for (int i = 0; i < t_ghosts.Length; i++)
+            {
+                t_ghosts[i].GetComponent<Ghosts>().ResetPosition();
+                t_ghosts[i].GetComponent<Ghosts>().ChangeMode(Ghosts.GhostMode.WAIT);
+                t_ghosts[i].GetComponent<Ghosts>().ResetTimer();
+                t_ghosts[i].GetComponent<SpriteRenderer>().enabled = false;
+            }
+        }
+        yield return new WaitForSeconds(m_resetTime);
+        ResetPostion();
+        m_dead = false;
+        yield return new WaitForSeconds(m_resetTime);
+        if (GameManager.m_gameManager.GetState() != GameManager.GameState.MAIN)
+        {
+            GameObject[] t_ghosts = GameObject.FindGameObjectsWithTag("Ghost");
+            for (int i = 0; i < t_ghosts.Length; i++)
+            {
+                t_ghosts[i].GetComponent<Ghosts>().ChangeMode(Ghosts.GhostMode.WAIT);
+                t_ghosts[i].GetComponent<SpriteRenderer>().enabled = true;
+            }
+        }
+    }
+
+    public bool IsDead()
+    {
+        return m_dead;
+    }
+
+    public void DisablePacMan()
+    {
+        m_renderer.enabled = false;
+        m_dead = true;
+        m_enabled = false;
+    }
+
+    public void EnablePacMan()
+    {
+        m_renderer.enabled = true;
+        m_dead = false;
+        m_enabled = true;
+    }
+
+    public bool IsEnabled()
+    {
+        return m_enabled;
     }
 }

@@ -34,8 +34,6 @@ public class Ghosts : MonoBehaviour
     [SerializeField]
     protected GhostMode m_currentMode;
 
-    private GhostMode m_previousMode;
-
     [SerializeField]
     protected Direction.Directions m_currentDirection;
 
@@ -176,7 +174,6 @@ public class Ghosts : MonoBehaviour
 
     public void ChangeMode(GhostMode _newMode)
     {
-        m_previousMode = m_currentMode;
         m_currentMode = _newMode;
     }
 

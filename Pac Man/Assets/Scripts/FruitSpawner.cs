@@ -38,6 +38,7 @@ public class FruitSpawner : MonoBehaviour
         }
         else if (m_currentFruit)
         {
+            StartDecayProcess();
         }
     }
 
@@ -53,8 +54,12 @@ public class FruitSpawner : MonoBehaviour
 
     private void SpawnFruit()
     {
-        m_currentFruit = (GameObject)Instantiate(m_fruits[GameManager.m_gameManager.GetLevel()], transform.position, Quaternion.identity);
-        m_node.SetObject(m_currentFruit);
+        if (GameManager.m_gameManager.GetLevel() < m_fruits.Length)
+        {
+            m_currentFruit = (GameObject)Instantiate(m_fruits[GameManager.m_gameManager.GetLevel()], transform.position, Quaternion.identity);
+            m_currentFruit.transform.parent = GameManager.m_gameManager.gameObject.transform;
+            m_node.SetObject(m_currentFruit);
+        }
     }
 
     private void StartDecayProcess()

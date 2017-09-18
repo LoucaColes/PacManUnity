@@ -44,6 +44,8 @@ public class LevelLoader : MonoBehaviour
     [SerializeField]
     private Node m_pinkyCorner;
 
+    public int m_levelCap;
+
     // Use this for initialization
     private void Start()
     {
@@ -60,10 +62,11 @@ public class LevelLoader : MonoBehaviour
         GameObject t_newLevel = new GameObject("Level");
         m_levelParent = t_newLevel.transform;
         t_newLevel.AddComponent<Grid>();
-        t_newLevel.AddComponent<GameManager>();
-        t_newLevel.GetComponent<GameManager>().SetCanvases(m_mainHud, m_gameHud);
-        t_newLevel.GetComponent<GameManager>().SetLevelLoader(this);
-        t_newLevel.GetComponent<GameManager>().SetPelletCount(0);
+        GameManager t_gameManager = t_newLevel.AddComponent<GameManager>();
+        t_gameManager.SetCanvases(m_mainHud, m_gameHud);
+        t_gameManager.SetLevelLoader(this);
+        t_gameManager.SetPelletCount(0);
+        t_gameManager.SetLevelCap(m_levelCap);
         m_grid = t_newLevel.GetComponent<Grid>();
         m_ghosts = new List<GameObject>();
     }

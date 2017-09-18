@@ -47,40 +47,6 @@ public class Grid : MonoBehaviour
         return m_nodes[_x, _y];
     }
 
-    public List<Node> GetNeighbours(Node node)
-    {
-        List<Node> neighbours = new List<Node>();
-
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int y = -1; y <= 1; y++)
-            {
-                if (x == 0 && y == 0)
-                    continue;
-
-                int checkX = (int)node.GetPosition().x + x;
-                int checkY = (int)node.GetPosition().y + y;
-
-                if (checkX >= 0 && checkX < m_width && checkY >= 0 && checkY < m_height)
-                {
-                    neighbours.Add(m_nodes[checkX, checkY]);
-                }
-            }
-        }
-
-        return neighbours;
-    }
-
-    public int GetWidth()
-    {
-        return m_width;
-    }
-
-    public int GetHeight()
-    {
-        return m_height;
-    }
-
     public void SetExitPoint(Node _point)
     {
         m_ghostExit = _point;

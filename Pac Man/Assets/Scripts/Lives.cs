@@ -5,16 +5,13 @@ using UnityEngine;
 public class Lives : MonoBehaviour
 {
     public int m_lives;
+    private int m_livesOriginal;
 
     // Use this for initialization
     private void Start()
     {
         GameManager.m_gameManager.GetGameHud().UpdateLivesText(m_lives);
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
+        m_livesOriginal = m_lives;
     }
 
     public void UpdateLives(int _amount)
@@ -23,6 +20,8 @@ public class Lives : MonoBehaviour
         GameManager.m_gameManager.GetGameHud().UpdateLivesText(m_lives);
         if (m_lives <= 0)
         {
+            m_lives = m_livesOriginal;
+            GameManager.m_gameManager.GetGameHud().UpdateLivesText(m_lives);
             GameManager.m_gameManager.GameOver();
         }
     }

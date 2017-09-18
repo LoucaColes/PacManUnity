@@ -21,7 +21,10 @@ public class InputHandler : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        HandleInput();
+        if (!m_movementScript.IsDead())
+        {
+            HandleInput();
+        }
     }
 
     private void HandleInput()

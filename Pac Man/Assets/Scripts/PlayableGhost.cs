@@ -5,7 +5,6 @@ using Rewired;
 
 public class PlayableGhost : Ghosts
 {
-    private Node m_node;
     private Vector3 m_direction;
 
     public int m_playerId;
@@ -23,7 +22,6 @@ public class PlayableGhost : Ghosts
     {
         ModeUpdate();
         base.MovementAnimationCheck();
-        SetOppositeDirection();
         Input();
         Movement();
     }
@@ -59,7 +57,6 @@ public class PlayableGhost : Ghosts
         if (m_direction != Vector3.zero)
         {
             Node t_nextNode = GetNextNode();
-            m_node = t_nextNode;
             if ((t_nextNode && t_nextNode.IsWalkableForGhosts()))
             {
                 transform.position = Vector3.MoveTowards(transform.position, t_nextNode.GetPosition(), m_moveSpeed * Time.deltaTime);

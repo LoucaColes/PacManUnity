@@ -12,16 +12,4 @@ public class Direction : MonoBehaviour
         LEFT,
         STOP
     }
-
-    public bool CompareDirections(Directions _a, Directions _b)
-    {
-        if (_a == _b)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
 }
