@@ -160,7 +160,6 @@ public class PacManMovement : MonoBehaviour
     {
         if (!m_dead)
         {
-            print("Not dead");
             switch (m_currentDirection)
             {
                 case Direction.Directions.RIGHT:

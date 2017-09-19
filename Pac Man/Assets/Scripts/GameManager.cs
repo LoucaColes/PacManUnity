@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
         NORM,
         RAND,
         COMP,
+        TWITCH,
         COUNT,
     }
 
@@ -61,6 +62,7 @@ public class GameManager : MonoBehaviour
         }
 
         ChangeState(GameState.MAIN);
+        SetGameType(GameType.NORM);
         m_level = 0;
 
         m_ghosts = new List<GameObject>();
@@ -237,6 +239,16 @@ public class GameManager : MonoBehaviour
     public void SetGameType(GameType _newType)
     {
         m_gameType = _newType;
+        if (m_gameType == GameType.TWITCH)
+        {
+            TwitchCanvas.m_instance.gameObject.GetComponent<Canvas>().enabled = true;
+            TwitchCanvas.m_instance.enabled = true;
+        }
+        else
+        {
+            TwitchCanvas.m_instance.gameObject.GetComponent<Canvas>().enabled = false;
+            TwitchCanvas.m_instance.enabled = false;
+        }
     }
 
     public GameType GetGameType()
@@ -249,6 +261,16 @@ public class GameManager : MonoBehaviour
         if (_newType < (int)GameType.COUNT)
         {
             m_gameType = (GameType)_newType;
+            if (m_gameType == GameType.TWITCH)
+            {
+                TwitchCanvas.m_instance.gameObject.GetComponent<Canvas>().enabled = true;
+                TwitchCanvas.m_instance.enabled = true;
+            }
+            else
+            {
+                TwitchCanvas.m_instance.gameObject.GetComponent<Canvas>().enabled = false;
+                TwitchCanvas.m_instance.enabled = false;
+            }
         }
     }
 
