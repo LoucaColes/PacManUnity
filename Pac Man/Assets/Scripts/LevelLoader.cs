@@ -46,6 +46,9 @@ public class LevelLoader : MonoBehaviour
 
     public int m_levelCap;
 
+    [SerializeField]
+    private List<GameObject> m_teleportPoints;
+
     // Use this for initialization
     private void Start()
     {
@@ -69,6 +72,7 @@ public class LevelLoader : MonoBehaviour
         t_gameManager.SetLevelCap(m_levelCap);
         m_grid = t_newLevel.GetComponent<Grid>();
         m_ghosts = new List<GameObject>();
+        m_teleportPoints = new List<GameObject>();
     }
 
     public void CreateLevel()
@@ -130,12 +134,23 @@ public class LevelLoader : MonoBehaviour
             }
         }
 
+        for (int i = 0; i < m_teleportPoints.Count; i++)
+        {
+            int t_index = i + 1;
+            if (t_index >= m_teleportPoints.Count)
+            {
+                t_index = 0;
+            }
+            m_teleportPoints[i].GetComponent<TeleportPoint>().SetNextNode(m_teleportPoints[t_index].GetComponent<Node>());
+        }
+
         GameManager.m_gameManager.ChangeState(GameManager.GameState.GAME);
     }
 
-    public void ClearGhosts()
+    public void ClearLists()
     {
         m_ghosts.Clear();
+        m_teleportPoints.Clear();
     }
 
     private bool CheckPixelAlpha(int _xPos, int _yPos)
@@ -197,7 +212,6 @@ public class LevelLoader : MonoBehaviour
 
             case 1:
             case 2:
-            case 5:
                 t_node.SetUpNode(t_newPiece, t_position, true, true, m_colourToPrefabs[_i].m_name, false, false);
                 break;
 
@@ -217,6 +231,11 @@ public class LevelLoader : MonoBehaviour
                     Destroy(t_newPiece.GetComponent<PowerUp>());
                 }
                 GameManager.m_gameManager.UpdatePelletCount(1);
+                break;
+
+            case 5:
+                t_node.SetUpNode(t_newPiece, t_position, true, true, m_colourToPrefabs[_i].m_name, false, false);
+                m_teleportPoints.Add(t_newPiece);
                 break;
 
             case 6:

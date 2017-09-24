@@ -450,6 +450,10 @@ public class Ghosts : MonoBehaviour
                         if (m_nextNode)
                         {
                             transform.position = Vector3.MoveTowards(transform.position, m_nextNode.GetPosition(), m_moveSpeed * Time.deltaTime);
+                            if (m_nextNode.GetComponent<TeleportPoint>())
+                            {
+                                m_nextNode.GetComponent<TeleportPoint>().Teleport(gameObject);
+                            }
                         }
                         if (m_currentDirection == Direction.Directions.UP)
                         {

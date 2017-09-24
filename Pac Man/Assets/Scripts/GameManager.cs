@@ -49,6 +49,10 @@ public class GameManager : MonoBehaviour
 
     private GameType m_gameType;
 
+    private string m_username;
+    private string m_password;
+    private string m_chatroom;
+
     // Use this for initialization
     private void Start()
     {
@@ -233,7 +237,7 @@ public class GameManager : MonoBehaviour
     {
         m_ghosts.Clear();
         m_ghostScripts.Clear();
-        m_levelLoader.ClearGhosts();
+        m_levelLoader.ClearLists();
     }
 
     public void SetGameType(GameType _newType)
@@ -277,5 +281,27 @@ public class GameManager : MonoBehaviour
     public void SetLevelCap(int _cap)
     {
         m_levelCap = _cap;
+    }
+
+    public void SetTwitchData(string _username, string _password, string _chatroom)
+    {
+        m_username = _username;
+        m_password = _password;
+        m_chatroom = _chatroom;
+    }
+
+    public string GetUsername()
+    {
+        return m_username;
+    }
+
+    public string GetPassword()
+    {
+        return m_password;
+    }
+
+    public string GetChatroom()
+    {
+        return m_chatroom;
     }
 }

@@ -60,6 +60,10 @@ public class PlayableGhost : Ghosts
             if ((t_nextNode && t_nextNode.IsWalkableForGhosts()))
             {
                 transform.position = Vector3.MoveTowards(transform.position, t_nextNode.GetPosition(), m_moveSpeed * Time.deltaTime);
+                if (t_nextNode.GetComponent<TeleportPoint>())
+                {
+                    t_nextNode.GetComponent<TeleportPoint>().Teleport(gameObject, m_direction);
+                }
             }
             else
             {

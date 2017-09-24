@@ -25,6 +25,10 @@ public class GameDebug : MonoBehaviour
     private void Update()
     {
         DebugMode();
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            GameManager.m_gameManager.GameOver();
+        }
     }
 
     private void DebugMode()

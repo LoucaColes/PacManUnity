@@ -12,6 +12,14 @@ public class MainMenuHud : MonoBehaviour
     public Text m_modeText;
     private int m_index;
 
+    public InputField m_userNameField;
+    public InputField m_passwordField;
+    public InputField m_chatRoomField;
+
+    private string m_username;
+    private string m_password;
+    private string m_chatroom;
+
     // Use this for initialization
     private void Start()
     {
@@ -43,8 +51,35 @@ public class MainMenuHud : MonoBehaviour
                         GameManager.m_gameManager.SetGameType(m_index);
                     }
                 }
+
+                if (GameManager.m_gameManager.GetGameType() == GameManager.GameType.TWITCH)
+                {
+                    m_userNameField.enabled = true;
+                    m_userNameField.gameObject.SetActive(true);
+                    m_passwordField.enabled = true;
+                    m_passwordField.gameObject.SetActive(true);
+                    m_chatRoomField.enabled = true;
+                    m_chatRoomField.gameObject.SetActive(true);
+                }
+                else
+                {
+                    m_userNameField.enabled = false;
+                    m_userNameField.gameObject.SetActive(false);
+                    m_passwordField.enabled = false;
+                    m_passwordField.gameObject.SetActive(false);
+                    m_chatRoomField.enabled = false;
+                    m_chatRoomField.gameObject.SetActive(false);
+                }
+
                 if (m_player.GetButtonDown("Accept"))
                 {
+                    if (GameManager.m_gameManager.GetGameType() == GameManager.GameType.TWITCH)
+                    {
+                        m_username = m_userNameField.text;
+                        m_password = m_passwordField.text;
+                        m_chatroom = m_chatRoomField.text;
+                        GameManager.m_gameManager.SetTwitchData(m_username, m_password, m_chatroom);
+                    }
                     PlayGame();
                 }
                 if (m_player.GetButtonDown("Return"))

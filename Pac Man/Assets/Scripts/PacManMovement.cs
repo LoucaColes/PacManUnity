@@ -68,6 +68,10 @@ public class PacManMovement : MonoBehaviour
         m_currentPower = PowerUp.Powers.COUNT;
         m_dead = false;
         m_enabled = true;
+        if (GameManager.m_gameManager.GetGameType() == GameManager.GameType.TWITCH)
+        {
+            m_moveSpeed = m_moveSpeed / m_moveSpeed;
+        }
     }
 
     // Update is called once per frame
@@ -87,6 +91,10 @@ public class PacManMovement : MonoBehaviour
             if ((t_nextNode && t_nextNode.IsWalkable()))
             {
                 transform.position = Vector3.MoveTowards(transform.position, t_nextNode.GetPosition(), m_moveSpeed * Time.deltaTime);
+                if (t_nextNode.GetComponent<TeleportPoint>())
+                {
+                    t_nextNode.GetComponent<TeleportPoint>().Teleport(gameObject, m_direction);
+                }
             }
             else
             {

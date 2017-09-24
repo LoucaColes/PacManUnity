@@ -30,9 +30,14 @@ public class TwitchBotInput : MonoBehaviour
             Destroy(gameObject.GetComponent<InputHandler>());
             m_movementScript = GetComponent<PacManMovement>();
             m_messageQueue = new Queue<string>();
-            this.m_username = "loucacolesgamedev".ToLower();
-            this.m_password = "oauth:idzb5toppv4xxihjonx823mno9uvbf";
-            this.m_channelName = "loucacolesgamedev".ToLower();
+            //this.m_username = "loucacolesgamedev".ToLower();
+            //this.m_password = "oauth:idzb5toppv4xxihjonx823mno9uvbf";
+            //this.m_channelName = "loucacolesgamedev".ToLower();
+
+            this.m_username = GameManager.m_gameManager.GetUsername().ToLower();
+            this.m_password = GameManager.m_gameManager.GetPassword();
+            this.m_channelName = GameManager.m_gameManager.GetChatroom().ToLower();
+
             this.m_chatCommandId = "PRIVMSG";
             //this.m_chatPrefix = $":{m_username}!{m_username}@{m_username}.tmi.chat.twitch.tv {m_chatCommandId} #{m_channelName} : ";
             this.m_chatPrefix = ":" + m_username + "!" + m_username + "@" + m_username + ".tmi.chat.twitch.tv " + m_chatCommandId + " #" + m_channelName + " : ";
@@ -75,15 +80,22 @@ public class TwitchBotInput : MonoBehaviour
 
     private void TrySendMessage()
     {
-        if (DateTime.Now - m_lastMessage > TimeSpan.FromSeconds(2))
+        //if (DateTime.Now - m_lastMessage > TimeSpan.FromSeconds(0.5))
+        //{
+        //    if (m_messageQueue.Count > 0)
+        //    {
+        //        var message = m_messageQueue.Dequeue();
+        //        m_streamWriter.WriteLine(m_chatPrefix + message);
+        //        m_streamWriter.Flush();
+        //        m_lastMessage = DateTime.Now;
+        //    }
+        //}
+        if (m_messageQueue.Count > 0)
         {
-            if (m_messageQueue.Count > 0)
-            {
-                var message = m_messageQueue.Dequeue();
-                m_streamWriter.WriteLine(m_chatPrefix + message);
-                m_streamWriter.Flush();
-                m_lastMessage = DateTime.Now;
-            }
+            var message = m_messageQueue.Dequeue();
+            m_streamWriter.WriteLine(m_chatPrefix + message);
+            m_streamWriter.Flush();
+            m_lastMessage = DateTime.Now;
         }
     }
 
@@ -140,7 +152,6 @@ public class TwitchBotInput : MonoBehaviour
         else if (_chatMessage.ToLower() == "!help" || _chatMessage.ToLower() == "help")
         {
             SendTwitchMessage(_speaker + ", enter ! followed by direction, e.g. !up");
-            m_movementScript.SetDirection(Vector3.left, Direction.Directions.LEFT);
         }
     }
 
